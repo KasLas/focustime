@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Platform, Vibration } from 'react-native';
 import { colors } from '../../utils/colors';
-import { fontSizes, spacing } from '../../utils/Sizes';
-import { Countdownm } from '../../components/Countdown';
+import { spacing } from '../../utils/Sizes';
+import { Countdown } from '../../components/Countdown';
 import { RoundedButton } from '../../components/RoundedButton';
 import { ProgressBar } from 'react-native-paper';
 import { Timing } from './Timing';
@@ -51,7 +51,7 @@ const Timer = ({ focusSubject, onTimerEnd, onClearFocusSubject}) => {
   return (
     <View style={styles.container}>
       <View style={styles.countdown}>
-        <Countdownm
+        <Countdown
           onEnd={onEnd}
           minutes={minutes}
           isPaused={!isStarted}

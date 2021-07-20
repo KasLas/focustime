@@ -1,27 +1,28 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { fontSizes, spacing } from '../utils/Sizes';
-import { colors } from '../utils/colors';
+import React, { useState, useEffect, useRef } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { fontSizes, spacing } from "../utils/Sizes";
+import { colors } from "../utils/colors";
 const minsTomilisec = (min) => min * 1000 * 60;
 
-const Countdownm = ({ minutes, isPaused, onProgress, onEnd }) => {
-  const countdown = useRef(null);
+const Countdown = ({ minutes, isPaused, onProgress, onEnd }) => {
+  const countdownRef = useRef(null);
+  const [milsec, setMilsec] = useState(null);
+  const [tempRemainingTime, setTempRemainingTime] = useState(null);
 
   const countDown = () => {
     setMilsec((time) => {
       if (time === 0) {
-        clearInterval(countdown.current);
-        onEnd();
+        clearInterval(countdownRef.current);
 
         return time;
       }
       const remainingTime = time - 1000;
-      onProgress(remainingTime / minsTomilisec(minutes));
+
+      setTempRemainingTime(remainingTime);
+
       return remainingTime;
     });
   };
-
-  const [milsec, setMilsec] = useState(null);
 
   const minute = Math.floor(milsec / 1000 / 60) % 60;
   const seconds = Math.floor(milsec / 1000) % 60;
@@ -31,13 +32,20 @@ const Countdownm = ({ minutes, isPaused, onProgress, onEnd }) => {
   };
 
   useEffect(() => {
+    onProgress(tempRemainingTime / minsTomilisec(minutes));
+    if (milsec === 0) {
+      onEnd();
+    }
+  }, [milsec]);
+
+  useEffect(() => {
     if (isPaused) {
-      if (countdown.current) clearInterval(countdown.current);
+      if (countdownRef.current) clearInterval(countdownRef.current);
       return;
     }
-    countdown.current = setInterval(countDown, 1000);
+    countdownRef.current = setInterval(countDown, 1000);
     return () => {
-      clearInterval(countdown.current);
+      clearInterval(countdownRef.current);
     };
   }, [isPaused]);
 
@@ -57,9 +65,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.darkBlue,
     padding: spacing.lg,
     fontSize: fontSizes.xxxl,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: colors.white,
   },
 });
 
-export { Countdownm };
+export { Countdown };
